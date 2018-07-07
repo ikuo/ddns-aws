@@ -1,0 +1,6 @@
+{
+  "ZoneID": "your-zone-id",
+  "Record": "your-record",
+  "AccessKey": "your-access-key",
+  "SecretKey": "your-secret-key"
+}
