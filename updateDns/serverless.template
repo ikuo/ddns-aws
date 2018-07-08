@@ -1,0 +1,24 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "An AWS Serverless Application.",
+  "Parameters": {
+    "ExecutionRole": {
+      "Type": "String",
+      "Description": "The IAM role of this function"
+    }
+  },
+  "Resources": {
+    "LambdaUpdateDns": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "updateDns::updateDns.Handler::update",
+        "Runtime": "dotnetcore2.0",
+        "CodeUri": "",
+        "MemorySize": 128,
+        "Timeout": 15,
+        "Role": { "Ref": "ExecutionRole" }
+      }
+    }
+  }
+}
