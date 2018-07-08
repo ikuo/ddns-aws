@@ -1,3 +1,7 @@
+# TODO
+
+- Setup environment variables in ./Function.fs
+
 # Empty AWS Serverless Application Project
 
 This starter project consists of:
