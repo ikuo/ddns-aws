@@ -10,6 +10,14 @@
     "ExecutionRole": {
       "Type": "String",
       "Description": "The IAM role of this function"
+    },
+    "HostZoneId": {
+      "Type": "String",
+      "Description": "Route53 host zone ID"
+    },
+    "FqdnWhitelist": {
+      "Type": "String",
+      "Description": "Whitelist of FQDNs in CSV"
     }
   },
   "Resources": {
@@ -22,7 +30,13 @@
         "CodeUri": "",
         "MemorySize": 128,
         "Timeout": 15,
-        "Role": { "Ref": "ExecutionRole" }
+        "Role": { "Ref": "ExecutionRole" },
+        "Environment": {
+          "Variables": {
+            "HOST_ZONE_ID": { "Ref": "HostZoneId" },
+            "FQDN_WHITELIST": { "Ref": "FqdnWhitelist" }
+          }
+        }
       }
     }
   }

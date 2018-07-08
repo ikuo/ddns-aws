@@ -38,5 +38,5 @@ Execute unit tests
 Deploy application with `ExecutionRole` parameter:
 
 ```
-    dotnet lambda deploy-serverless -tp ExecutionRole=<role-arn>
+    dotnet lambda deploy-serverless -tp ExecutionRole=<role-arn>;HostZoneId=<zone-id>;FqdnWhitelist=<fqdn-csv>
 ```

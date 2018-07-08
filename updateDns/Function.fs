@@ -12,10 +12,10 @@ type Request = { fqdn: string; ip: string; oldIp: string }
 ()
 
 module Handler =
-  let getEnv name = System.Environment.GetEnvironmentVariable name
-  let region = getEnv("AWS_REGION") |> Amazon.RegionEndpoint.GetBySystemName
+  let getEnv name   = System.Environment.GetEnvironmentVariable name
+  let region        = getEnv("AWS_REGION") |> Amazon.RegionEndpoint.GetBySystemName
+  let hostZoneId    = getEnv("HOST_ZONE_ID")
   let fqdnWhitelist = getEnv("FQDN_WHITELIST").Split [|','|]
-  let hostZoneId = getEnv("HOST_ZONE_ID")
 
   let changeRequest (request: Request) =
     let change =
