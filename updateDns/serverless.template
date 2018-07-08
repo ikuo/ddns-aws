@@ -3,6 +3,10 @@
   "Transform": "AWS::Serverless-2016-10-31",
   "Description": "An AWS Serverless Application.",
   "Parameters": {
+    "FunctionName": {
+      "Type": "String",
+      "Default": "updateDns"
+    },
     "ExecutionRole": {
       "Type": "String",
       "Description": "The IAM role of this function"
@@ -12,6 +16,7 @@
     "LambdaUpdateDns": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
+        "FunctionName": { "Ref": "FunctionName" },
         "Handler": "updateDns::updateDns.Handler::update",
         "Runtime": "dotnetcore2.0",
         "CodeUri": "",
