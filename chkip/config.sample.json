@@ -1,8 +1,7 @@
 {
   "FQDN": "example.com.",
   "Lambda": {
-    "FunctionName": "updateDns",
-    "Qualifier": "$LATEST"
+    "FunctionName": "updateDns:$LATEST"
   },
   "AWS": {
     "Region": "ap-northeast-1",

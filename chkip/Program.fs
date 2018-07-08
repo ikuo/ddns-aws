@@ -22,12 +22,13 @@ let ipByDns (fqdn: String): String =
 let reportIpChange (config: IConfigurationRoot, fqdn: String, oldIp: String, newIp: String): unit =
   printfn "Reporting IP change of %s: %s --to--> %s"  fqdn oldIp newIp
   let cnf = config.GetSection("Lambda")
+  let payload = sprintf """{ "fqdn": "%s", "ip": "%s", "oldIp": "%s" }""" fqdn newIp oldIp
   let lambda = config.GetAWSOptions().CreateServiceClient<IAmazonLambda>()
   let result =
     new InvokeRequest(
       FunctionName = cnf.["FunctionName"],
-      Qualifier = cnf.["Qualifier"],
-      InvocationType = InvocationType.Event
+      InvocationType = InvocationType.Event,
+      Payload = payload
     ) |> lambda.InvokeAsync |> Async.AwaitTask |> Async.RunSynchronously
   if not (result.FunctionError |> String.IsNullOrEmpty)
   then printfn "Failed to invoke function due to: %s" result.FunctionError
