@@ -1,5 +1,11 @@
 {
   "FQDN": "example.com.",
-  "AccessKey": "your-access-key",
-  "SecretKey": "your-secret-key"
+  "Lambda": {
+    "FunctionName": "updateDns",
+    "Qualifier": "$LATEST"
+  },
+  "AWS": {
+    "Region": "ap-northeast-1",
+    "Profile": "ddns"
+  }
 }
