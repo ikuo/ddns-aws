@@ -6,9 +6,8 @@ open Hopac
 open HttpFs.Client
 open DnsClient
 
-let configuration (): IConfigurationRoot =
-  let path = Directory.GetCurrentDirectory()
-  (new ConfigurationBuilder()).AddJsonFile(Path.Combine[| path; "config.json" |])
+let configuration (path: String) =
+  (new ConfigurationBuilder()).AddJsonFile(path)
     .Build()
 
 let ipOfMe (): String =
@@ -22,13 +21,12 @@ let ipByDns (fqdn: String): String =
 
 [<EntryPoint>]
 let main argv =
-  let config = configuration()
+  let config = configuration(Path.Combine[| Directory.GetCurrentDirectory(); "config.json" |])
   let fqdn: String = config.["FQDN"]
   let ip = ipOfMe()
   let ipDns = ipByDns(fqdn)
-  printfn "ZoneID = %s" (config.["ZoneID"])
   if ip.Equals(ipDns) then
     printfn "Skipping because %s already points to %s" fqdn ip
   else
-    printfn "Updating %s; %s (old) --to--> %s (new)" fqdn ipDns ip
+    printfn "Reporting IP change of %s: %s --to--> %s" fqdn ipDns ip
   0

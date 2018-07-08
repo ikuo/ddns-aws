@@ -1,5 +1,4 @@
 {
-  "ZoneID": "example-zone-id",
   "FQDN": "example.com.",
   "AccessKey": "your-access-key",
   "SecretKey": "your-secret-key"
