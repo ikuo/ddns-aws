@@ -8,9 +8,7 @@ open DnsClient
 open Amazon.Lambda
 open Amazon.Lambda.Model
 
-let configuration (path: String) =
-  (new ConfigurationBuilder()).AddJsonFile(path)
-    .Build()
+let configuration (path: String) = (new ConfigurationBuilder()).AddJsonFile(path).Build()
 
 let ipOfMe (): String =
   let body = Request.createUrl Get "http://checkip.amazonaws.com" |> Request.responseAsString |> run
