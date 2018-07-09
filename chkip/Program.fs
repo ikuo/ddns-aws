@@ -8,18 +8,20 @@ open DnsClient
 open Amazon.Lambda
 open Amazon.Lambda.Model
 
-let configuration (path: String) = (new ConfigurationBuilder()).AddJsonFile(path).Build()
+let configuration (path: string) = (new ConfigurationBuilder()).AddJsonFile(path).Build()
 
 let ipOfMe (): String =
   let body = Request.createUrl Get "http://checkip.amazonaws.com" |> Request.responseAsString |> run
   body.Trim()
 
-let ipByDns (fqdn: String): String =
+let ipByDns (fqdn: string): string option =
   let client = new LookupClient()
   client.UseCache <- false
-  client.Query(fqdn, QueryType.A).Answers.ARecords().FirstOrDefault().Address.ToString()
+  match client.Query(fqdn, QueryType.A).Answers.ARecords().FirstOrDefault() with
+  | null -> None
+  | r -> Some(r.Address.ToString())
 
-let reportIpChange (config: IConfigurationRoot, fqdn: String, oldIp: String, newIp: String): unit =
+let reportIpChange (config: IConfigurationRoot, fqdn: string, newIp: string, oldIp: string): unit =
   printfn "Reporting IP change of %s: %s --to--> %s"  fqdn oldIp newIp
   let cnf = config.GetSection("Lambda")
   let payload = sprintf """{ "fqdn": "%s", "ip": "%s", "oldIp": "%s" }""" fqdn newIp oldIp
@@ -38,9 +40,11 @@ let main argv =
   let config = configuration(Path.Combine[| Directory.GetCurrentDirectory(); "config.json" |])
   let fqdn: String = config.["FQDN"]
   let ip = ipOfMe()
-  let ipDns = ipByDns(fqdn)
-  if ip.Equals(ipDns) then
-    printfn "Skipping because %s already points to %s" fqdn ip
-  else
-    reportIpChange(config, fqdn, ipDns, ip)
+  match ipByDns(fqdn) with
+  | None -> reportIpChange(config, fqdn, ip, "")
+  | Some(ipDns) ->
+    if ip.Equals(ipDns) then
+      printfn "Skipping because %s already points to %s" fqdn ip
+    else
+      reportIpChange(config, fqdn, ip, ipDns)
   0
