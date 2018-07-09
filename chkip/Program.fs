@@ -10,7 +10,7 @@ open Amazon.Lambda.Model
 
 let configuration (path: string) = (new ConfigurationBuilder()).AddJsonFile(path).Build()
 
-let ipOfMe (): String =
+let ipOfMe (): string =
   let body = Request.createUrl Get "http://checkip.amazonaws.com" |> Request.responseAsString |> run
   body.Trim()
 
@@ -38,7 +38,7 @@ let reportIpChange (config: IConfigurationRoot, fqdn: string, newIp: string, old
 [<EntryPoint>]
 let main argv =
   let config = configuration(Path.Combine[| Directory.GetCurrentDirectory(); "config.json" |])
-  let fqdn: String = config.["FQDN"]
+  let fqdn: string = config.["FQDN"]
   let ip = ipOfMe()
   match ipByDns(fqdn) with
   | None -> reportIpChange(config, fqdn, ip, "")
