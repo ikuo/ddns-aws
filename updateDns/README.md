@@ -17,7 +17,7 @@ Make and edit a config file:
 cp aws-lambda-tools-defaults.json aws-lambda-tools.json
 ```
 
-Deploy to AWS with CloudFormation stack name.
+Deploy to AWS with CloudFormation with stack name.
 
 ```
 dotnet lambda deploy-serverless --stack-name update-dns -cfg aws-lambda-tools.json
