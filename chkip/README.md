@@ -49,11 +49,3 @@ dotnet bin/Release/netcoreapp2.0/osx-x64/chkip.dll
 ```
 
 To run periodicaly, use task scheduler in Windows or cron in *nix.
-
-## TODO
-
-```
-Unhandled Exception: System.NullReferenceException: Object reference not set to an instance of an object.
-   at Program.ipByDns(String fqdn) in Program.fs:line 18
-   at Program.main(String[] argv)  in Program.fs:line 39
-```
