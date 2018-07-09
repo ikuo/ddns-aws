@@ -38,5 +38,6 @@ module Handler =
       let route53: AmazonRoute53Client = new AmazonRoute53Client(region)
       changeRequest(request) |> route53.ChangeResourceRecordSetsAsync
       |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+      log(sprintf "Updated %s => %s" request.fqdn request.ip)
     else
       log(sprintf "%s is not in white list" request.fqdn)
