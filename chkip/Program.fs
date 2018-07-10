@@ -7,8 +7,11 @@ open HttpFs.Client
 open DnsClient
 open Amazon.Lambda
 open Amazon.Lambda.Model
+let inline (|?) (a: 'a option) b = if a.IsSome then a.Value else b
 
-let configuration (path: string) = (new ConfigurationBuilder()).AddJsonFile(path).Build()
+let configuration (pathOpt: string option) =
+  let path = pathOpt |? Path.Combine[| Directory.GetCurrentDirectory(); "config.json" |]
+  (new ConfigurationBuilder()).AddJsonFile(path).Build()
 
 let ipOfMe (): string =
   let body = Request.createUrl Get "http://checkip.amazonaws.com" |> Request.responseAsString |> run
@@ -17,9 +20,8 @@ let ipOfMe (): string =
 let ipByDns (fqdn: string): string option =
   let client = new LookupClient()
   client.UseCache <- false
-  match client.Query(fqdn, QueryType.A).Answers.ARecords().FirstOrDefault() with
-  | null -> None
-  | r -> Some(r.Address.ToString())
+  client.Query(fqdn, QueryType.A).Answers.ARecords().FirstOrDefault()
+    |> Option.ofObj |> Option.map (fun r -> r.Address.ToString())
 
 let reportIpChange (config: IConfigurationRoot, fqdn: string, newIp: string, oldIp: string): unit =
   printfn "Reporting IP change of %s: %s --to--> %s"  fqdn oldIp newIp
@@ -28,23 +30,20 @@ let reportIpChange (config: IConfigurationRoot, fqdn: string, newIp: string, old
   let lambda = config.GetAWSOptions().CreateServiceClient<IAmazonLambda>()
   let result =
     new InvokeRequest(
-      FunctionName = cnf.["FunctionName"],
+      FunctionName   = cnf.["FunctionName"],
       InvocationType = InvocationType.Event,
-      Payload = payload
+      Payload        = payload
     ) |> lambda.InvokeAsync |> Async.AwaitTask |> Async.RunSynchronously
   if not (result.FunctionError |> String.IsNullOrEmpty)
   then printfn "Failed to invoke function due to: %s" result.FunctionError
 
 [<EntryPoint>]
 let main argv =
-  let config = configuration(Path.Combine[| Directory.GetCurrentDirectory(); "config.json" |])
-  let fqdn: string = config.["FQDN"]
-  let ip = ipOfMe()
+  let config = configuration(argv |> Array.tryHead)
+  let fqdn   = config.["FQDN"]
+  let ip     = ipOfMe()
   match ipByDns(fqdn) with
-  | None -> reportIpChange(config, fqdn, ip, "")
-  | Some(ipDns) ->
-    if ip.Equals(ipDns) then
-      printfn "Skipping because %s already points to %s" fqdn ip
-    else
-      reportIpChange(config, fqdn, ip, ipDns)
+  | Some(ipDns) when ip.Equals(ipDns) -> printfn "%s already points to %s" fqdn ip
+  | Some(ipDns) -> reportIpChange(config, fqdn, ip, ipDns)
+  | None        -> reportIpChange(config, fqdn, ip, "")
   0
