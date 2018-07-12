@@ -5,12 +5,8 @@ A CLI app to report IP change to a Lambda function.
 ## Building
 
 ```
-dotnet restore
-dotnet build --configuration Release --runtime win10-x64
+dotnet publish -c Release --framework netcoreapp2.1
 ```
-
-`win10-x64` part can be replaced with `osx-x64`, `linux-x64` etc.
-See also [RID Catalog](https://docs.microsoft.com/dotnet/core/rid-catalog).
 
 ## Setup
 
@@ -27,20 +23,6 @@ aws_secret_access_key = {secretKey}
 
 ## Running
 
-Run a binary under `bin/Release` directory.
-
-Windows:
-
-```cmd
-bin\Release\netcoreapp2.1\win10-x64\chkip.exe
-```
-or
-```cmd
-dotnet bin\Release\netcoreapp2.1\chkip.dll
-```
-
-macOS:
-
 ```sh
-./bin/Release/netcoreapp2.1/osx-x64/chkip
+dotnet bin/Release/netcoreapp2.1/chkip.dll
 ```
