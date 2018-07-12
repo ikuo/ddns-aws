@@ -2,7 +2,7 @@
   "profile": "default",
   "region" : "ap-northeast-1",
   "configuration": "Release",
-  "framework": "netcoreapp2.0",
+  "framework": "netcoreapp2.1",
   "configuration": "Release",
   "stack-name": "update-dns",
   "s3-bucket": "my-bucket",

@@ -26,7 +26,7 @@
       "Properties": {
         "FunctionName": { "Ref": "FunctionName" },
         "Handler": "updateDns::updateDns.Handler::update",
-        "Runtime": "dotnetcore2.0",
+        "Runtime": "dotnetcore2.1",
         "CodeUri": "",
         "MemorySize": 128,
         "Timeout": 15,
